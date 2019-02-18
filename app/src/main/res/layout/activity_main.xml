@@ -208,7 +208,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_zero"
+            android:id="@+id/btn_0"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5px"
