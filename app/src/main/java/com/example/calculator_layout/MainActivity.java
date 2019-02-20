@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     int equalPressed = 0;
     int numberPressed = 0;
     int secondOperandPressed = 0;
+    int calculDone = 0;
 
     static Button bC;
     static Button bDEL;
@@ -93,27 +94,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
      protected void calculate () {
-         Double total;
+
+         Double total = 0.0;
          TextView RESULT = findViewById(R.id.result);
-         number2 = Double.parseDouble(RESULT.getText().toString());
+
+         if (secondOperandPressed == 2 && calculDone == 1 && equalPressed == 0) {
+             Double number3 = 0.0;
+             number3 = Double.parseDouble(RESULT.getText().toString());
+             number1 = number3;
+         } else number2 = Double.parseDouble(RESULT.getText().toString());
 
          if (operandPressed[0] == 1) {
              total = number1 + number2;
          } else if (operandPressed[1] == 1) {
              total = number1 - number2;
-         } else if (operandPressed[2] == 1) {
-             total = number1 / number2;
+         } else if (operandPressed[2] == 1 && number2 != 0) {
+                 total = number1 / number2;
          } else if (operandPressed[3] == 1) {
              total = number1 * number2;
          } else total = number2;
 
          //formatting output
-         if (total %1 ==0) {
-             RESULT.setText(String.format("%.0f", total));
-         } else {
-             RESULT.setText(String.valueOf(total));
-         }
+             if (total %1 ==0) {
+                 RESULT.setText(String.format("%.0f", total));
+             } else {
+                 RESULT.setText(String.valueOf(total));
+             }
+
          secondOperandPressed = 1;
+         calculDone = 1;
      }
 
     @Override
@@ -146,10 +155,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 TextView RESULT = findViewById(R.id.result);
-                if (i == 1 ) {
+                if (i == 1  || numberPressed == 0 || equalPressed == 1 || secondOperandPressed == 2) {
                     RESULT.setText("");
                 }
-                RESULT.setText((((Integer.parseInt(RESULT.getText().toString()) == 0 || numberPressed == 0) || equalPressed == 1) ? "0" : RESULT.getText()+"0"));
+                RESULT.setText((RESULT.getText().toString().equals("") ||
+                        Integer.parseInt(RESULT.getText().toString()) == 0) ? "0" : RESULT.getText()+"0");
                 i = 0;
                 numberPressed = 1;
                 history += "0";
@@ -256,6 +266,8 @@ public class MainActivity extends AppCompatActivity {
                 history += "C\n";
                 buttonBackground();
                 bC.getBackground().setColorFilter(Color.parseColor("#6567dc"), PorterDuff.Mode.MULTIPLY);
+                Arrays.fill(operandPressed, 0);
+                calculDone = 0;
             }
         });
 
