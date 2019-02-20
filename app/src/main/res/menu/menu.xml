@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu"
+        android:title="@string/menu"
+        app:showAsAction="always" >
+        <!--&lt;!&ndash;/>&ndash;&gt;-->
+        <!--"file" submenu -->
+        <menu>
+            <item
+                android:id="@+id/about"
+                android:title="@string/about" />
+        </menu>
+    </item>
+</menu>
