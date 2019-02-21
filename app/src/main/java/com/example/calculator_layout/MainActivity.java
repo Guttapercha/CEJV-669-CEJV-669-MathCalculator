@@ -33,11 +33,17 @@ public class MainActivity extends AppCompatActivity {
     // 0 ->"plus"; 1 ->"minus"; 2 ->"divide"; 3 ->"multiply"
     // 0 values correspond to nonPressed buttons (1 will be attributed to pressed math function)
     int[] operandPressed = new int[] {0,0,0,0};
+
+    //parameters indicating end of number input or pressing buttons for calculation performing or finishing
     int equalPressed = 0;
     int numberPressed = 0;
     int secondOperandPressed = 0;
     int calculDone = 0;
 
+    //output parameter for history recorded
+    String history = "";
+
+    //decare here button to be able to use them outside of onCreate method
     static Button bC;
     static Button bDEL;
     static Button bpercent;
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     static Button bequal;
 
 
-    //set default button background
+    //set default button background after pressing each next button
     public void buttonBackground() {
         bsum.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
         bmultiplication.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
@@ -64,50 +70,69 @@ public class MainActivity extends AppCompatActivity {
         bDEL.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
     }
 
-    String history = "";
+
     public String getHistory() {
         return history;
     }
 
     //treating pressing number button
+
     protected void pressButton(int j, String number) {
         buttonBackground();
         TextView RESULT = findViewById(R.id.result);
+
+        //if math operation performed and accomplished by pressing "=",
+        // erase the current number on the screen to be ready for the new input
         if (j == 1 || equalPressed ==1) {
             RESULT.setText("");
         }
+        //if first number is zero (without decimal part) avoid it and replace by number;
+        // otherwise continue adding numbers to the input
         RESULT.setText((RESULT.getText().toString().equals("0")) ? number : RESULT.getText()+number);
+
+        //new nunmber input - no math operations and executions performed so far
         i = 0;
-        numberPressed = 1;
         equalPressed = 0;
+
+        numberPressed = 1; //signifies that number was entered to the input window
         history += number;
     }
 
     //keeping in memory first input
     protected void takeInputForMath() {
+        //signifies consequent pressing math operation signs not interrupted by equal sign
         secondOperandPressed++;
         TextView RESULT = findViewById(R.id.result);
+
+        //if input is not null consider performing operation (assigning i=1)
         if (!RESULT.getText().toString().isEmpty()) {
             i=1;
+            //if math operation sign pressed second time without interrupting by "="
+            //perform first calculation of precedent math operation if there is
             if (secondOperandPressed == 2) {
                 calculate();
             }
             number1 = Double.parseDouble(RESULT.getText().toString());
         }
+        //unset all math operation signs
         Arrays.fill(operandPressed, 0);
     }
 
+    //perform chosen math operation
      protected void calculate () {
 
          Double total = 0.0;
          TextView RESULT = findViewById(R.id.result);
 
+         //managing number1 and number2 when math calculation signs pressed twice
+         // without interrupting by "=" sign
          if (secondOperandPressed == 2 && calculDone == 1 && equalPressed == 0) {
              Double number3 = 0.0;
              number3 = Double.parseDouble(RESULT.getText().toString());
              number1 = number3;
          } else number2 = Double.parseDouble(RESULT.getText().toString());
 
+         //performing standard math operations
          if (operandPressed[0] == 1) {
              total = number1 + number2;
          } else if (operandPressed[1] == 1) {
@@ -125,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
                  RESULT.setText(String.valueOf(total));
              }
 
+         //unsetting one math calculation over two (if there is)
+         //and signifying end of calculation
          secondOperandPressed = 1;
          calculDone = 1;
      }
@@ -155,13 +182,17 @@ public class MainActivity extends AppCompatActivity {
         bsum = (Button) findViewById(R.id.btn_sum);
         bequal = (Button) findViewById(R.id.btn_equal);
 
+
         b0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView RESULT = findViewById(R.id.result);
+                //usetting input field after first operation was performed
+                //and one expect either initial input or second input for second math operation
                 if (i == 1  || numberPressed == 0 || equalPressed == 1 || secondOperandPressed == 2) {
                     RESULT.setText("");
                 }
+                //display input of number "0"
                 RESULT.setText((RESULT.getText().toString().equals("") ||
                         Integer.parseInt(RESULT.getText().toString()) == 0) ? "0" : RESULT.getText()+"0");
                 i = 0;
@@ -368,6 +399,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button b = findViewById(R.id.btn_history);
 
+        //using fragment to display calculations history
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -380,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //create Option Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -387,6 +420,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //creating new activity with app info by choose the only option existing ("About")
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
